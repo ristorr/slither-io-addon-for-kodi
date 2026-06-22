@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <category label="Slither.io Settings">
+    <setting id="browser_path" type="text" label="Browser path" default="/usr/bin/brave-browser" />
+    <setting id="browser_args" type="text" label="Browser arguments" default="--kiosk --start-fullscreen --app={url}" />
+    <setting id="game_url" type="text" label="Game URL" default="https://slither.io" />
+  </category>
+</settings>
