@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import xbmcgui
 import xbmcaddon
+import xbmc
 
 ADDON = xbmcaddon.Addon()
 
@@ -46,6 +47,9 @@ for p in candidates:
         seen.add(p)
         candidates_clean.append(p)
 
+# Debug log of candidates
+xbmc.log(f"[plugin.program.slitherio] candidate browser paths:\n{candidates_clean}", xbmc.LOGDEBUG)
+
 browser = None
 for p in candidates_clean:
     if is_executable(p):
@@ -60,6 +64,7 @@ if not browser:
         "Please install Brave (https://brave.com) or set the correct browser path in the add-on settings.\n"
         "Open the add-on's settings via Add-ons → My add-ons → Programs → Slither.io (Brave) → Configure."
     )
+    xbmc.log(f"[plugin.program.slitherio] browser not found. tried:\n{tried}", xbmc.LOGERROR)
     xbmcgui.Dialog().ok("Slither.io", message)
 else:
     # Prepare arguments; allow the user to use {url} placeholder in the settings
@@ -73,9 +78,12 @@ else:
     if not any(arg.startswith('--app') for arg in args_list):
         args_list.append('--app=' + url)
 
+    cmd = [browser] + args_list
+    xbmc.log(f"[plugin.program.slitherio] launching command: {cmd}", xbmc.LOGINFO)
     try:
-        subprocess.Popen([browser] + args_list)
+        subprocess.Popen(cmd)
         # Notify user
         xbmcgui.Dialog().notification('Slither.io', 'Launching Brave...')
     except Exception as e:
+        xbmc.log(f"[plugin.program.slitherio] failed to launch browser: {e}", xbmc.LOGERROR)
         xbmcgui.Dialog().ok('Slither.io', 'Failed to launch browser: %s' % str(e))
